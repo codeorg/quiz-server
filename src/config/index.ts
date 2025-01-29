@@ -8,7 +8,6 @@ import { menu } from './menu'
 let config: any = {
     env: 'dev',
     key: '111111111222',
-    // api: 'https://dev.msdp.cn',
     router: { staticServerPath: 'public' },
     level: level,
     mongo: mongo,
