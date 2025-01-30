@@ -12,8 +12,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { schema } from './controller/schema';
 import { MyContext } from './controller/interface'
-
 import { lv, Err } from './common'
+const PORT = process.env.port || 4000;
 
 // interface MyContext {
 //     user?: any;
@@ -143,9 +143,9 @@ async function run() {
         res.status(500).send('Something broke!');
     });
 
-    app.listen({ port: 4000 })
+    app.listen({ port: PORT })
     // await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
-    console.log(`🚀 Server ready at http://localhost:4000`);
+    console.log(`🚀 Server ready at http://localhost:${PORT}`);
 }
 
 run()
