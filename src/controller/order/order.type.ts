@@ -7,7 +7,7 @@ export class OrderType {
   @Field()
   status: number;
   @Field({ nullable: true })
-  userId: string;  
+  userId: string;
   @Field()
   name: string;
   @Field()

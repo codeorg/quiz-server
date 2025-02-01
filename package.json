@@ -9,6 +9,7 @@
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "body-parser": "^1.20.3",
+    "co-log": "^2.1.8",
     "co-util": "^2.1.16",
     "cors": "^2.8.5",
     "express": "^4.21.2",

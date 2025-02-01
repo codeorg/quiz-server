@@ -7,7 +7,7 @@ import util from "co-util"
 @Resolver()
 export class UserResolver {
 
-  @Query(returns => Boolean)
+  @Mutation(returns => Boolean)
   async reg(
     @Arg("username") username: string,
     @Arg("mobile") mobile: string,
@@ -46,6 +46,13 @@ export class UserResolver {
     await lv.sess.remove(user.token);
     return true
   }
+
+  @Mutation(returns => Boolean)
+  async test() {
+    console.log('test')
+    return true
+  }
+
 
 
 }

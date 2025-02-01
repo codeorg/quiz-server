@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ApolloServer, } from '@apollo/server';
+import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
 import { expressMiddleware } from '@apollo/server/express4';
@@ -10,33 +10,14 @@ import util from 'co-util';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { Log } from 'co-log';
+
 import { schema } from './controller/schema';
 import { MyContext } from './controller/interface'
 import { lv, Err } from './common'
+import config from './config'
 const PORT = process.env.port || 4000;
-
-// interface MyContext {
-//     user?: any;
-// }
-
-
 const app = express();
-// const httpServer = http.createServer(app);
-
-// const server = new ApolloServer({ schema });
-// // server.applyMiddleware({ app, path: '/graphql' });
-
-// app.listen(4000, () => {
-//   console.log('Server ready at http://localhost:4000/graphql');
-// });
-
-
-// Set up Apollo Server
-// app.use(function (err, req, res, next) {
-//     console.error(err);
-//     console.error(err.name);
-//     res.status(500).send('Something broke!');
-// });
 
 async function run() {
     // const schema = buildSchemaSync({ resolvers: [RecipeResolver]})
@@ -45,11 +26,36 @@ async function run() {
         // typeDefs,
         // resolvers,
         //plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-        // formatError: (err:any) => {
+        introspection: process.env.NODE_ENV !== 'production',
+        plugins: [
+            {
+                async serverWillStart() {
+                    console.log('Server starting!');
+                }
+            },
+            {
+                async requestDidStart(initialRequestContext) {
+                    const start: bigint = process.hrtime.bigint();
 
-        //     // 对错误进行处理，例如添加更多的上下文信息或修改错误消息等。
-        //     throw new Error(`Internal server error: ${err.message}`);
-        // }
+                    if (initialRequestContext.request.operationName !== 'IntrospectionQuery') {
+                        console.log('START', initialRequestContext.request.query);
+                        console.log('variables', initialRequestContext.request.variables);
+                    }
+                    return {
+                        willSendResponse: async (requestContext: any) => {
+                            const end: bigint = process.hrtime.bigint();
+
+                            if (requestContext.operationName !== 'IntrospectionQuery') {
+                                console.log('END', requestContext.operationName, (end - start) / BigInt(1000000) + 'ms');
+                                // console.log('END', JSON.stringify(requestContext.response.body.singleResult), (end - start) / BigInt(1000000) + 'MS');
+                            }
+                        }
+                    }
+                }
+            },
+
+        ]
+
         // formatError: (formattedError, error) => {
         //     // Return a different error message
         //     if (
@@ -69,69 +75,25 @@ async function run() {
 
     });
 
-    // const { url } = await startStandaloneServer(server, {
-    //     context: async ({ req }) => {
-    //         // get the user token from the headers
-    //         const token = req.headers.authorization || '';
-    //         console.log('token-----', token)
-    //         if (token) {
-    //             let user = await lv.sess.get(token);
-    //             console.log('user-----', user)
-    //             if (user) return { user }
-    //         }
-    //         // try to retrieve a user with the token
-    //         //   const user = getUser(token);
-
-    //         //   // optionally block the user
-    //         //   // we could also check user roles/permissions here
-    //         //   if (!user)
-    //         //     // throwing a `GraphQLError` here allows us to specify an HTTP status code,
-    //         //     // standard `Error`s will have a 500 status code by default
-    //         //     throw new GraphQLError('User is not authenticated', {
-    //         //       extensions: {
-    //         //         code: 'UNAUTHENTICATED',
-    //         //         http: { status: 401 },
-    //         //       }
-    //         //     });
-
-    //         // add the user to the context
-    //         return
-    //     },
-    // });
     await server.start();
 
+    app.use(new Log(config.log).setRequestIdForExpress());
 
     app.use(
         cors(),
         bodyParser.json(),
         expressMiddleware(server, {
-            context: async ({ req }) => {
-
-                // get the user token from the headers
+            context: async ({ req }: any) => {
+                //console.error('start');
                 const token = req.headers.authorization || '';
                 // console.log('token-----', token)
                 if (token) {
                     let user = await lv.sess.get(token);
                     // console.log('user-----', user)
                     if (user) return { user }
+                    // console.log('request id', req.id)
                     throw new Err(4004, 'token过期')
                 }
-                // try to retrieve a user with the token
-                //   const user = getUser(token);
-
-                //   // optionally block the user
-                //   // we could also check user roles/permissions here
-                //   if (!user)
-                //     // throwing a `GraphQLError` here allows us to specify an HTTP status code,
-                //     // standard `Error`s will have a 500 status code by default
-                //     throw new GraphQLError('User is not authenticated', {
-                //       extensions: {
-                //         code: 'UNAUTHENTICATED',
-                //         http: { status: 401 },
-                //       }
-                //     });
-
-                // add the user to the context
                 return
             },
         }),

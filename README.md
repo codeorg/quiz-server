@@ -14,3 +14,7 @@ npm i -g typescript
 ```git
 npm run start
 ```
+本地默认地址 http://localhost:4000/
+
+测试服务器地址 http://139.159.227.79:7020/
+

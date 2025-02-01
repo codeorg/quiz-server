@@ -47,7 +47,7 @@ export class OrderResolver {
 
 
   @Authorized(["user", "admin"])
-  @Query(returns => Boolean)
+  @Mutation(returns => Boolean)
   async cancelOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string) {
     // console.log('user', user)
     let con: any = { _id: db.ObjectId(orderId) }
@@ -62,7 +62,7 @@ export class OrderResolver {
   }
 
   @Authorized("admin")
-  @Query(returns => Boolean)
+  @Mutation(returns => Boolean)
   async approveOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string) {
     // console.log('user', user)
     let con: any = { _id: db.ObjectId(orderId) }
@@ -76,7 +76,7 @@ export class OrderResolver {
   }
 
   @Authorized("user")
-  @Query(returns => Boolean)
+  @Mutation(returns => Boolean)
   async insertOrder(@Ctx("user") user: any, @Arg("eta") eta: number, @Arg("name") name: string, @Arg("mobile") mobile: string) {
     let day = util.dayTime(eta, 0);
     await db.order.insertOne({
@@ -92,7 +92,7 @@ export class OrderResolver {
 
 
   @Authorized(["user", "admin"])
-  @Query(returns => Boolean)
+  @Mutation(returns => Boolean)
   async updateOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string, @Arg("eta") eta: number, @Arg("name") name: string, @Arg("mobile") mobile: string) {
     let con: any = { _id: db.ObjectId(orderId) }
     let order = await db.order.findOne(con);
