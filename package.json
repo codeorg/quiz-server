@@ -4,7 +4,16 @@
   "description": "",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon -e ts --exec ts-node src/app"
+    "start": "nodemon -e ts --exec ts-node src/app",
+    "test": "ava"
+  },
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
@@ -20,5 +29,10 @@
     "reflect-metadata": "^0.2.2",
     "type-graphql": "^2.0.0-rc.2",
     "typedi": "^0.10.0"
+  },
+  "devDependencies": {
+    "ava": "^6.2.0",
+    "graphql-request": "^7.1.2",
+    "ts-node": "^10.9.2"
   }
 }

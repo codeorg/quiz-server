@@ -12,13 +12,15 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { Log } from 'co-log';
 
-import { schema } from './controller/schema';
-import { MyContext } from './controller/interface'
+import { schema } from './schema';
 import { lv, Err } from './common'
 import config from './config'
 const PORT = process.env.port || 4000;
 const app = express();
 
+interface MyContext {
+    user?: any;
+  }
 async function run() {
     // const schema = buildSchemaSync({ resolvers: [RecipeResolver]})
     const server = new ApolloServer<MyContext>({

@@ -6,7 +6,14 @@ import util from "co-util"
 
 @Resolver()
 export class UserResolver {
-
+  /**
+  * 用户/管理员 注册
+  * @param {string} username 用户名
+  * @param {string} mobile 手机号
+  * @param {string} password 密码
+  * @param {string} role 角色
+  * @return {Boolean} 返回值
+  */
   @Mutation(returns => Boolean)
   async reg(
     @Arg("username") username: string,
@@ -22,7 +29,12 @@ export class UserResolver {
     await db.user.insertOne({ username, mobile, password, role: role, time: new Date().getTime() });
     return true
   }
-
+  /**
+   * 用户/管理员 登录
+   * @param {string} username 用户名
+   * @param {string} password 密码
+   * @return {Boolean} 返回值
+   */
   @Query(returns => String)
   async login(
     @Arg("username") username: string,

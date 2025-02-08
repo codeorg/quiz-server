@@ -5,7 +5,13 @@ import { OrderType } from './order.type'
 
 @Resolver()
 export class OrderResolver {
-
+  /**
+ * 订单列表 for 管理员
+ * @param {MyContext} user 登录用户，上下文传入
+ * @param {number} eta 根据预计到达时间进行过滤
+ * @param {number} status 根据订单状态进行过滤 -1取消，0预订中，1成功
+ * @return {Array} 返回值
+ */
   @Authorized("admin")
   @Query(returns => [OrderType])
   async findOrders(@Ctx("user") user: any, @Arg("eta", { nullable: true }) eta: number, @Arg("status", { nullable: true }) status: number) {
@@ -22,7 +28,12 @@ export class OrderResolver {
     console.log('orders', orders)
     return orders
   }
-
+  /**
+  * 用户我的订单
+  * @param {MyContext} user 登录用户，上下文传入
+  * @param {number} status 根据订单状态进行过滤 -1取消，0预订中，1成功
+  * @return {Array} 返回值
+  */
   @Authorized("user")
   @Query(returns => [OrderType])
   async findMyOrders(@Ctx("user") user: any, @Arg("status", { nullable: true }) status: number) {
@@ -36,6 +47,12 @@ export class OrderResolver {
     return orders
   }
 
+  /**
+ * 订单详情
+ * @param {MyContext} user 登录用户，上下文传入
+ * @param {string} orderId 订单ID
+ * @return {Object} 返回值
+ */
   @Authorized(["user", "admin"])
   @Query(returns => OrderType)
   async findOneOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string) {
@@ -45,7 +62,12 @@ export class OrderResolver {
     return order
   }
 
-
+  /**
+  * 用户/管理员 取消预订
+  * @param {MyContext} user 登录用户，上下文传入
+  * @param {string} orderId 订单ID
+  * @return {Boolean} 返回值
+  */
   @Authorized(["user", "admin"])
   @Mutation(returns => Boolean)
   async cancelOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string) {
@@ -60,7 +82,12 @@ export class OrderResolver {
     });
     return true
   }
-
+  /**
+  * 管理员设置通过预订
+  * @param {MyContext} user 登录用户，上下文传入
+  * @param {string} orderId 订单ID
+  * @return {Boolean} 返回值
+  */
   @Authorized("admin")
   @Mutation(returns => Boolean)
   async approveOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string) {
@@ -75,6 +102,14 @@ export class OrderResolver {
     return true
   }
 
+  /**
+ * 用户申请预订
+ * @param {MyContext} user 登录用户，上下文传入
+ * @param {number} eta 预计到达时间
+ * @param {string} name 姓名
+ * @param {string} mobile 手机号
+ * @return {Boolean} 返回值
+ */
   @Authorized("user")
   @Mutation(returns => Boolean)
   async insertOrder(@Ctx("user") user: any, @Arg("eta") eta: number, @Arg("name") name: string, @Arg("mobile") mobile: string) {
@@ -90,7 +125,15 @@ export class OrderResolver {
     return true
   }
 
-
+  /**
+ * 用户/管理员修改预订
+ * @param {MyContext} user 登录用户，上下文传入
+ * @param {string} orderId 订单ID
+ * @param {number} eta 预计到达时间
+ * @param {string} name 姓名
+ * @param {string} mobile 手机号
+ * @return {Boolean} 返回值
+ */
   @Authorized(["user", "admin"])
   @Mutation(returns => Boolean)
   async updateOrder(@Ctx("user") user: any, @Arg("orderId") orderId: string, @Arg("eta") eta: number, @Arg("name") name: string, @Arg("mobile") mobile: string) {
