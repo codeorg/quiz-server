@@ -18,6 +18,11 @@ npm run start
 
 测试服务器地址 http://139.159.227.79:7020/
 
+## 单元测试
+```git
+npm run test
+```
+
 ## 数据结构
 ```java
 //order表
