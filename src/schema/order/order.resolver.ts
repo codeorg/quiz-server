@@ -117,6 +117,7 @@ export class OrderResolver {
     await db.order.insertOne({
       time: new Date().getTime(),
       userId: user._id,
+      username: user.username,//用户名
       status: 0, //-1取消，0预订中，1成功
       name,
       mobile,

@@ -9,6 +9,8 @@ export class OrderType {
   @Field({ nullable: true })
   userId: string;
   @Field()
+  username: string;
+  @Field()
   name: string;
   @Field()
   mobile: string;
